@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Calendar, Mail, Phone } from "lucide-react";
 import { personal } from "@/lib/portfolio-data";
 import { GithubIcon, LinkedinIcon, WhatsappIcon } from "./BrandIcons";
@@ -84,12 +85,12 @@ export function Footer() {
           © {new Date().getFullYear()} {personal.name} · {personal.location}
         </p>
         <div className="flex gap-5">
-          <a href="/demo" className="hover:text-ink">
+          <Link href="/demo" className="hover:text-ink">
             Demo website
-          </a>
-          <a href="/demo/dashboard" className="hover:text-ink">
+          </Link>
+          <Link href="/demo/dashboard" className="hover:text-ink">
             Demo dashboard
-          </a>
+          </Link>
           <a href={personal.resumeUrl} target="_blank" rel="noreferrer" className="hover:text-ink">
             Résumé
           </a>

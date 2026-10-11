@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
+import { withBasePath } from "@/lib/base-path";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
     title: "Aastha Sharma | Freelance Full-Stack Developer",
     description: "Dashboards, internal tools and workflow automation for growing businesses.",
   },
+  icons: { icon: withBasePath("/favicon.ico") },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

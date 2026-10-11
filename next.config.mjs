@@ -1,6 +1,14 @@
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const staticExport = process.env.STATIC_EXPORT === "true";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Required for Cloudflare Pages
+  ...(staticExport && {
+    output: "export",
+    trailingSlash: true,
+    images: { unoptimized: true },
+  }),
+  ...(basePath && { basePath, assetPrefix: basePath }),
 };
 
 export default nextConfig;
