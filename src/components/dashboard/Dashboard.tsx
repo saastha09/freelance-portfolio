@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import {
   Bell,
+  CheckCircle2,
   ClipboardCheck,
   ClipboardList,
   FolderKanban,
@@ -44,6 +46,20 @@ export function Dashboard() {
   const pathname = usePathname();
   const params = useSearchParams();
   const { state, update, reset } = useDemoState();
+  const [resetCount, setResetCount] = useState(0);
+  const [showResetToast, setShowResetToast] = useState(false);
+  const toastTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => () => clearTimeout(toastTimer.current), []);
+
+  function handleReset() {
+    reset();
+    // Remount the active tab so local UI state (filters, open forms) resets too.
+    setResetCount((c) => c + 1);
+    setShowResetToast(true);
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setShowResetToast(false), 2500);
+  }
 
   const active = (tabs.find((t) => t.id === params.get("tab"))?.id ?? "overview") as TabId;
   const current = tabs.find((t) => t.id === active)!;
@@ -107,7 +123,7 @@ export function Dashboard() {
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={reset}
+                onClick={handleReset}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50"
                 title="Restore the original sample data"
               >
@@ -152,16 +168,32 @@ export function Dashboard() {
               ))}
             </div>
           ) : (
-            <>
+            <div key={resetCount}>
               {active === "overview" && <Overview state={state} update={update} goTo={goTo} />}
               {active === "projects" && <ProjectsTab />}
               {active === "approvals" && <ApprovalsTab state={state} update={update} goTo={goTo} />}
               {active === "leads" && <LeadsTab state={state} update={update} goTo={goTo} />}
               {active === "reports" && <ReportsTab state={state} update={update} goTo={goTo} />}
               {active === "automations" && <AutomationsTab state={state} update={update} goTo={goTo} />}
-            </>
+            </div>
           )}
         </main>
+      </div>
+
+      <div
+        role="status"
+        aria-live="polite"
+        className={cn(
+          "pointer-events-none fixed bottom-6 left-1/2 z-50 -translate-x-1/2 transition-all duration-200",
+          showResetToast ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0",
+        )}
+      >
+        {showResetToast && (
+          <span className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white shadow-lg">
+            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+            Demo data reset
+          </span>
+        )}
       </div>
     </div>
   );

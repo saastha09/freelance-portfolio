@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 import { FINANCE_THRESHOLD, salesTeam } from "./demo-data";
 
 export type RequestStatus = "pending" | "approved" | "rejected";
@@ -65,7 +65,6 @@ export type DemoState = {
 };
 
 const STORAGE_KEY = "northstone-demo-v1";
-const CHANGE_EVENT = "northstone-demo-change";
 
 const ago = (minutes: number) => new Date(Date.now() - minutes * 60_000).toISOString();
 const uid = () => Math.random().toString(36).slice(2, 9);
@@ -276,47 +275,80 @@ function seed(): DemoState {
   };
 }
 
-function read(): DemoState {
-  if (typeof window === "undefined") return seed();
+// The in-memory copy is the source of truth; localStorage is best-effort persistence,
+// so the demo (including reset) keeps working where storage is blocked or full.
+let memory: DemoState | null = null;
+const listeners = new Set<() => void>();
+
+function parse(raw: string | null): DemoState | null {
+  if (!raw) return null;
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw) as DemoState;
+    const s = JSON.parse(raw) as DemoState;
+    const ok =
+      Array.isArray(s?.requests) &&
+      Array.isArray(s.leads) &&
+      Array.isArray(s.automations) &&
+      Array.isArray(s.activity) &&
+      Array.isArray(s.remindedReports) &&
+      typeof s.poCounter === "number";
+    return ok ? s : null;
   } catch {
-    // Corrupt or blocked storage: fall back to fresh sample data.
+    return null;
   }
-  const fresh = seed();
-  write(fresh);
-  return fresh;
 }
 
-function write(state: DemoState) {
+function persist(state: DemoState) {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch {
-    // Private mode / quota: the demo still works in memory.
+    // Private mode / quota / sandboxed iframe: state stays in memory only.
   }
-  window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 
-export function useDemoState() {
-  const [state, setState] = useState<DemoState | null>(null);
+function load(): DemoState {
+  if (memory) return memory;
+  let stored: DemoState | null = null;
+  try {
+    stored = parse(window.localStorage.getItem(STORAGE_KEY));
+  } catch {
+    // Blocked storage: start from sample data.
+  }
+  memory = stored ?? seed();
+  if (!stored) persist(memory);
+  return memory;
+}
 
-  useEffect(() => {
-    setState(read());
-    const sync = () => setState(read());
-    window.addEventListener(CHANGE_EVENT, sync);
-    window.addEventListener("storage", sync);
-    return () => {
-      window.removeEventListener(CHANGE_EVENT, sync);
-      window.removeEventListener("storage", sync);
-    };
-  }, []);
+function commit(state: DemoState) {
+  memory = state;
+  persist(state);
+  listeners.forEach((l) => l());
+}
+
+function onStorage(e: StorageEvent) {
+  if (e.key !== null && e.key !== STORAGE_KEY) return;
+  memory = parse(e.newValue);
+  listeners.forEach((l) => l());
+}
+
+function subscribe(listener: () => void) {
+  if (listeners.size === 0) window.addEventListener("storage", onStorage);
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+    if (listeners.size === 0) window.removeEventListener("storage", onStorage);
+  };
+}
+
+const getServerSnapshot = () => null;
+
+export function useDemoState() {
+  const state = useSyncExternalStore<DemoState | null>(subscribe, load, getServerSnapshot);
 
   const update = useCallback((fn: (s: DemoState) => DemoState) => {
-    write(fn(read()));
+    commit(fn(load()));
   }, []);
 
-  const reset = useCallback(() => write(seed()), []);
+  const reset = useCallback(() => commit(seed()), []);
 
   return { state, update, reset };
 }
@@ -357,7 +389,7 @@ export function submitEnquiry(input: {
   budget: string;
   message: string;
 }) {
-  let s = read();
+  let s = load();
   const owner = salesTeam[s.leads.length % salesTeam.length];
   const lead: Lead = {
     id: "L-" + uid(),
@@ -374,7 +406,7 @@ export function submitEnquiry(input: {
     s = logActivity(s, `Lead ${lead.name} assigned to ${owner}; WhatsApp alert sent`);
     s = bumpAutomation(s, "lead-alert");
   }
-  write(s);
+  commit(s);
 }
 
 export function timeAgo(iso: string) {
