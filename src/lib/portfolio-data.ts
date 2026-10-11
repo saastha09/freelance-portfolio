@@ -211,7 +211,7 @@ export const stack = [
 ];
 
 export const about = [
-  "I'm Aastha, a full-stack developer in Bangalore with 2+ years of building and running production software.",
+  "I'm Aastha, a full-stack developer in Bangalore with almost 3 years of building and running production software.",
   "Most of my work sits where business processes meet code: approval chains, dashboards, booking and payment flows, and the background jobs that keep everything moving. I'm comfortable owning the whole thing, from the database and APIs to the screens people use every day.",
   "I like working with operations teams directly. The best automation comes from sitting with the people who do the work, not from a requirements document.",
 ];
