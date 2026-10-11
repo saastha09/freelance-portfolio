@@ -39,7 +39,7 @@ export function LeadsTab({ state, update }: TabProps) {
       </div>
 
       <div className="scrollbar-thin -mx-5 overflow-x-auto px-5 pb-2 sm:-mx-8 sm:px-8">
-        <div className="grid min-w-[1100px] grid-cols-5 gap-4">
+        <div className="grid min-w-[940px] grid-cols-5 gap-3">
           {leadStages.map((stage) => {
             const leads = state.leads.filter((l) => l.stage === stage);
             return (
