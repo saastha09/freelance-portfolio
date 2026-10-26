@@ -1,21 +1,49 @@
+"use client";
+
 import { BadgeCheck, CheckCircle2, LineChart, Users } from "lucide-react";
-import { projects, type Project } from "@/lib/portfolio-data";
+import { useState } from "react";
+import { projectCategories, projects, type Project, type ProjectCategory } from "@/lib/portfolio-data";
+import { cn } from "@/lib/utils";
 import { Section, SectionHeading } from "./Section";
 
 export function Work() {
-  const [featured, ...rest] = projects;
+  const featured = projects.find((p) => p.featured) ?? projects[0];
+  const [filter, setFilter] = useState<ProjectCategory | "all">("all");
+  const rest = projects.filter((p) => p !== featured && (filter === "all" || p.category === filter));
+  const count = (id: ProjectCategory | "all") =>
+    projects.filter((p) => p !== featured && (id === "all" || p.category === id)).length;
 
   return (
     <Section id="work" className="bg-white">
       <SectionHeading
         eyebrow="Selected work"
         title="Products I've built and shipped"
-        description="Freelance and independent work across dashboards, payments, automation and booking platforms."
+        description="Client projects, apps and the tools I build for myself: dashboards, payments, booking, mobile, AI and the infrastructure underneath."
       />
 
       <FeaturedProject project={featured} />
 
-      <div className="mt-6 grid gap-5 lg:grid-cols-3">
+      <div className="mt-12 flex flex-wrap gap-2" role="tablist" aria-label="Filter projects">
+        {projectCategories.map((c) => (
+          <button
+            key={c.id}
+            type="button"
+            role="tab"
+            aria-selected={filter === c.id}
+            onClick={() => setFilter(c.id)}
+            className={cn(
+              "rounded-full border px-4 py-1.5 text-sm transition-colors",
+              filter === c.id
+                ? "border-ink bg-ink text-white"
+                : "border-paper-line bg-paper text-ink-soft hover:border-ink hover:text-ink",
+            )}
+          >
+            {c.label} <span className={cn("ml-1 text-xs", filter === c.id ? "text-slate-300" : "text-ink-muted")}>{count(c.id)}</span>
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {rest.map((p) => (
           <ProjectCard key={p.id} project={p} />
         ))}
@@ -113,10 +141,17 @@ function RightAstraMock() {
 
 function ProjectCard({ project: p }: { project: Project }) {
   return (
-    <article className="flex flex-col rounded-2xl border border-paper-line bg-paper p-6 shadow-card">
-      <span className="w-fit rounded-full bg-white px-2.5 py-1 text-xs font-medium text-ink-soft ring-1 ring-paper-line">
-        {p.tag}
-      </span>
+    <article className="flex flex-col rounded-2xl border border-paper-line bg-paper p-6 shadow-card transition-shadow hover:shadow-lift">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="w-fit rounded-full bg-white px-2.5 py-1 text-xs font-medium text-ink-soft ring-1 ring-paper-line">
+          {p.tag}
+        </span>
+        {p.status && (
+          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 ring-1 ring-amber-200">
+            {p.status}
+          </span>
+        )}
+      </div>
       <h3 className="mt-4 text-xl font-semibold tracking-tight">{p.name}</h3>
       <p className="mt-2 text-sm leading-relaxed text-ink-soft">{p.summary}</p>
 
@@ -136,6 +171,11 @@ function ProjectCard({ project: p }: { project: Project }) {
           </span>
         ))}
       </div>
+      {p.link && (
+        <a href={p.link.href} target="_blank" rel="noreferrer" className="mt-4 text-sm font-medium text-brand hover:underline">
+          {p.link.label} →
+        </a>
+      )}
     </article>
   );
 }

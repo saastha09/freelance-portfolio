@@ -5,6 +5,7 @@ import { withBasePath } from "@/lib/base-path";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://saastha09.github.io/freelance-portfolio/"),
   title: "Aastha Sharma | Freelance Full-Stack Developer, Bangalore",
   description:
     "Freelance full-stack developer in Bangalore building business dashboards, internal tools and workflow automation, from database to front-end.",
@@ -18,7 +19,9 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Aastha Sharma | Freelance Full-Stack Developer",
     description: "Dashboards, internal tools and workflow automation for growing businesses.",
+    images: [{ url: "og-image.png", width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image", title: "Aastha Sharma | Freelance Full-Stack Developer" },
   icons: { icon: withBasePath("/favicon.ico") },
 };
 

@@ -91,8 +91,8 @@ export function Footer() {
           <Link href="/demo/dashboard" className="hover:text-ink">
             Demo dashboard
           </Link>
-          <a href={personal.resumeUrl} target="_blank" rel="noreferrer" className="hover:text-ink">
-            Résumé
+          <a href={personal.github} target="_blank" rel="noreferrer" className="hover:text-ink">
+            GitHub
           </a>
         </div>
       </div>
