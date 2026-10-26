@@ -10,15 +10,17 @@ const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://saastha09.github.io/freelance-portfolio/"),
-  title: "Aastha Sharma | Freelance Full-Stack Developer, Bangalore",
+  title: "Aastha Sharma | Remote Freelance Full-Stack Developer",
   description:
-    "Freelance full-stack developer in Bangalore: websites, web and mobile apps, dashboards, AI features, workflow automation, payments and cloud hosting.",
+    "Remote freelance full-stack developer for clients in the US, Europe and worldwide: web and mobile apps, AI features, automation, dashboards, payments and cloud.",
   keywords: [
-    "freelance full stack developer Bangalore",
+    "remote freelance full stack developer",
+    "hire full stack developer",
+    "contract developer US",
     "workflow automation developer",
     "business dashboard developer",
     "internal tools",
-    "Next.js developer Bangalore",
+    "freelance Next.js developer",
     "Flutter app developer",
     "AI chatbot developer",
     "Golang developer freelance",

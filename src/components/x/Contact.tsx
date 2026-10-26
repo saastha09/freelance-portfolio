@@ -1,16 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, Mail, Phone } from "lucide-react";
+import { ArrowUpRight, Mail, Video } from "lucide-react";
 import { personal } from "@/lib/portfolio-data";
-import { GithubIcon, LinkedinIcon, WhatsappIcon } from "../portfolio/BrandIcons";
+import { GithubIcon, WhatsappIcon } from "../portfolio/BrandIcons";
 import { Magnetic } from "./fx";
 
 export function Contact() {
   const channels = [
     { icon: Mail, label: "Email", value: personal.email, href: `mailto:${personal.email}` },
     { icon: WhatsappIcon, label: "WhatsApp", value: personal.phone, href: personal.whatsapp },
-    { icon: Phone, label: "Call", value: personal.phone, href: `tel:${personal.phone.replace(/\s/g, "")}` },
+    { icon: Video, label: "Video call", value: "Pick a time in your time zone", href: personal.cal },
   ];
 
   return (
@@ -65,9 +65,6 @@ export function Contact() {
               Book a free 15-min call <ArrowUpRight className="h-5 w-5" />
             </a>
           </Magnetic>
-          <a href={personal.linkedin} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-3.5 text-sm font-semibold hover:border-white">
-            <LinkedinIcon className="h-4 w-4" /> LinkedIn
-          </a>
           <a href={personal.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-3.5 text-sm font-semibold hover:border-white">
             <GithubIcon className="h-4 w-4" /> GitHub
           </a>

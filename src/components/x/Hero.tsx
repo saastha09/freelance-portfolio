@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { ArrowDown, ArrowUpRight, Sparkles } from "lucide-react";
 import { withBasePath } from "@/lib/base-path";
-import { personal, projectCount, services } from "@/lib/portfolio-data";
+import { projectCount, services } from "@/lib/portfolio-data";
 import { CountUp, Magnetic, ScrambleWords } from "./fx";
 import { ParticleField } from "./ParticleField";
 
@@ -46,7 +46,7 @@ export function Hero() {
               <span className="absolute inline-flex h-full w-full animate-pulse-ring rounded-full bg-sand" />
               <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-sand" />
             </span>
-            Taking new projects · {personal.location}
+            Taking new projects · Remote, clients worldwide
           </div>
 
           <h1 className="mt-7 font-display text-[2.3rem] font-semibold leading-[1.05] tracking-tight sm:text-5xl lg:text-[3.4rem] xl:text-[3.9rem]">

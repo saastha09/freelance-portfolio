@@ -3,12 +3,11 @@ import { withBasePath } from "./base-path";
 export const personal = {
   name: "Aastha Sharma",
   role: "Freelance Full-Stack Developer",
-  location: "Bangalore, India",
+  location: "Remote · clients worldwide",
   email: "saastha.2911@gmail.com",
   phone: "+91 72968 36197",
   whatsapp: "https://wa.me/917296836197",
   github: "https://github.com/saastha09",
-  linkedin: "https://linkedin.com/in/aastha-sharma-906a2720a",
   cal: "https://cal.com/aastha-sharma-bjlgi7/15min",
   photoUrl: withBasePath("/photo.jpg"),
 };
@@ -16,7 +15,7 @@ export const personal = {
 export const heroPoints = [
   "Web, mobile, desktop, AI and backend: one person accountable end to end",
   "Weekly demos you can click, not status reports",
-  "Bangalore-based; remote or on-site with your team",
+  "Remote-first: clients across the US, Europe and beyond",
 ];
 
 export type Service = {
@@ -101,7 +100,7 @@ export const services: Service[] = [
     icon: "payments",
     title: "Payments, wallets & logins",
     description: "Money and identity handled carefully: payment flows, wallets and who-can-see-what.",
-    examples: ["Razorpay checkout, links & KYC", "Wallets, referrals & ledgers", "OTP, Google sign-in, roles & permissions"],
+    examples: ["Checkout, payment links & KYC flows", "Wallets, referrals & ledgers", "OTP, Google sign-in, roles & permissions"],
   },
   {
     icon: "api",
@@ -113,7 +112,7 @@ export const services: Service[] = [
     icon: "integrations",
     title: "Integrations",
     description: "Connect the tools you already pay for so data is entered once and flows everywhere it is needed.",
-    examples: ["WhatsApp, email & SMS (Twilio) alerts", "Google Sheets, Excel & Tally exports", "Third-party REST APIs & webhooks"],
+    examples: ["WhatsApp, email & SMS (Twilio) alerts", "Google Sheets, Excel & accounting exports", "Third-party REST APIs & webhooks"],
   },
   {
     icon: "cloud",
@@ -445,7 +444,7 @@ export const process = [
   {
     step: "01",
     title: "Understand the problem",
-    body: "A call (or a visit) to see how work actually moves today: who does what, where it breaks, what success looks like.",
+    body: "A video call, booked in your time zone, to see how work actually moves today: who does what, where it breaks, what success looks like.",
   },
   {
     step: "02",
@@ -465,6 +464,10 @@ export const process = [
 ];
 
 export const engagements = [
+  {
+    title: "Part-time contract",
+    body: "20–25 hours a week inside your team: your repo, your tickets, your standups. Billed hourly, in USD or EUR.",
+  },
   {
     title: "Fixed-scope project",
     body: "Clear deliverables, timeline and price agreed up front. Best for a website, an app, a dashboard or one automation.",
@@ -489,7 +492,7 @@ export const stack = [
 ];
 
 export const about = [
-  "I'm Aastha, a full-stack developer in Bangalore with 2.5+ years of building and running production software.",
+  "I'm Aastha, a remote full-stack developer with 2.5+ years of building and running production software, working with clients wherever they are.",
   "I like owning the whole thing: the database and APIs, the screens people use, the automation in the background and the server it all runs on. That's why my projects range from a Flutter app and a desktop companion to payment ledgers and deployment platforms.",
   "I build tools for myself too. My job-search agent and NekoDesk run on my own machine every day, so I know what it takes to keep software useful after the demo.",
 ];

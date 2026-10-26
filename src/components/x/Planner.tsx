@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Calendar, Check, Mail, Sparkles } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { personal } from "@/lib/portfolio-data";
 import { cn } from "@/lib/utils";
 import { WhatsappIcon } from "../portfolio/BrandIcons";
@@ -23,7 +23,24 @@ const NEEDS = [
   "Fix or upgrade an existing app",
 ];
 const TIMELINES = ["As soon as possible", "Within a month", "2–3 months", "Flexible"];
-const BUDGETS = ["Under ₹50k", "₹50k – ₹1.5L", "₹1.5L – ₹5L", "₹5L+", "Not sure yet"];
+type Currency = "USD" | "EUR" | "GBP" | "INR";
+const CURRENCIES: Currency[] = ["USD", "EUR", "GBP", "INR"];
+const BUDGETS: Record<Currency, string[]> = {
+  USD: ["Under $1,000", "$1,000 – $3,000", "$3,000 – $10,000", "$10,000+"],
+  EUR: ["Under €1,000", "€1,000 – €3,000", "€3,000 – €10,000", "€10,000+"],
+  GBP: ["Under £1,000", "£1,000 – £3,000", "£3,000 – £10,000", "£10,000+"],
+  INR: ["Under ₹50k", "₹50k – ₹1.5L", "₹1.5L – ₹5L", "₹5L+"],
+};
+const NOT_SURE = "Not sure yet";
+
+/** Best guess at the visitor's currency from their time zone; USD for everyone else. */
+function guessCurrency(): Currency {
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone ?? "";
+  if (tz === "Asia/Kolkata" || tz === "Asia/Calcutta") return "INR";
+  if (tz === "Europe/London") return "GBP";
+  if (tz.startsWith("Europe/")) return "EUR";
+  return "USD";
+}
 
 export function Planner() {
   const [step, setStep] = useState(0);
@@ -32,6 +49,9 @@ export function Planner() {
   const [budget, setBudget] = useState("");
   const [name, setName] = useState("");
   const [idea, setIdea] = useState("");
+  const [currency, setCurrency] = useState<Currency>("USD");
+
+  useEffect(() => setCurrency(guessCurrency()), []);
 
   const steps = ["What", "When", "Budget", "About you"];
   const canNext = [needs.length > 0, !!timeline, !!budget, name.trim().length > 0][step];
@@ -62,7 +82,7 @@ export function Planner() {
           kicker="Start a project"
           title="Tell me what you need."
           accent="Takes 30 seconds."
-          description="Pick a few options and I'll get a ready-to-send message. I reply within a day with how I'd build it, a timeline and a price."
+          description="Pick a few options and you'll get a ready-to-send message. I reply within a day with how I'd build it, a timeline and a quote in your currency."
         />
 
         <div className="mt-14 overflow-hidden rounded-[2rem] border border-white/10 bg-night-800/80 p-6 shadow-[0_40px_120px_-40px_rgba(169,150,232,0.25)] backdrop-blur sm:p-10">
@@ -95,7 +115,34 @@ export function Planner() {
                   <Choice title="What do you need built?" hint="Pick as many as you like." options={NEEDS} selected={needs} onPick={(o) => setNeeds((n) => (n.includes(o) ? n.filter((x) => x !== o) : [...n, o]))} />
                 )}
                 {step === 1 && <Choice title="When do you need it?" options={TIMELINES} selected={[timeline]} onPick={(o) => setTimeline(o)} />}
-                {step === 2 && <Choice title="Roughly what budget?" hint="Helps me suggest the right scope. No commitment." options={BUDGETS} selected={[budget]} onPick={(o) => setBudget(o)} />}
+                {step === 2 && (
+                  <div>
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <h3 className="font-display text-2xl font-semibold">Roughly what budget?</h3>
+                      <div className="flex rounded-full border border-white/15 p-1" role="radiogroup" aria-label="Currency">
+                        {CURRENCIES.map((c) => (
+                          <button
+                            key={c}
+                            type="button"
+                            role="radio"
+                            aria-checked={currency === c}
+                            onClick={() => {
+                              setCurrency(c);
+                              setBudget((b) => (b === NOT_SURE ? b : ""));
+                            }}
+                            className={cn(
+                              "rounded-full px-3 py-1 font-mono text-xs transition-colors",
+                              currency === c ? "bg-sand text-night" : "text-white/60 hover:text-white",
+                            )}
+                          >
+                            {c}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <Choice hint="Helps me suggest the right scope. No commitment." options={[...BUDGETS[currency], NOT_SURE]} selected={[budget]} onPick={(o) => setBudget(o)} />
+                  </div>
+                )}
                 {step === 3 && (
                   <div>
                     <h3 className="font-display text-2xl font-semibold">Last bit: who are you?</h3>
@@ -177,10 +224,10 @@ export function Planner() {
   );
 }
 
-function Choice({ title, hint, options, selected, onPick }: { title: string; hint?: string; options: string[]; selected: string[]; onPick: (o: string) => void }) {
+function Choice({ title, hint, options, selected, onPick }: { title?: string; hint?: string; options: string[]; selected: string[]; onPick: (o: string) => void }) {
   return (
     <div>
-      <h3 className="font-display text-2xl font-semibold">{title}</h3>
+      {title && <h3 className="font-display text-2xl font-semibold">{title}</h3>}
       {hint && <p className="mt-2 text-white/50">{hint}</p>}
       <div className="mt-6 flex flex-wrap gap-3">
         {options.map((o) => {
