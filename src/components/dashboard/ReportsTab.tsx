@@ -62,7 +62,7 @@ export function ReportsTab({ state, update }: TabProps) {
           const p = siteProjects.find((x) => x.id === r.projectId)!;
           const reminded = state.remindedReports.includes(r.id);
           return (
-            <Card key={r.id} className="p-5">
+            <Card key={r.id} className="min-w-0 p-5">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="truncate font-semibold">{p.name}</p>
